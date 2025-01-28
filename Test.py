@@ -113,16 +113,18 @@ class Test:
         q2.setFinal()  
 
         
-        q0.addTransition(q1, 'e', '$', '$') 
-        q1.addTransition(q1, 'q', '$', 'q$')  
-        q1.addTransition(q1, 't', 'q$', 'tq$')  
-        q1.addTransition(q1, '(', 'tq$', '(t$')  
-        q1.addTransition(q1, 'a', '(t$', 'a($') 
-        q1.addTransition(q1, ')', 'a($', None)  
-        q1.addTransition(q1, '{', None, '{$')  
-        q1.addTransition(q1, '}', '{$', '$')  
+        q0.addTransition(q0, None, None, '$') 
+        q0.addTransition(q1, 'e', None, None) 
+        q1.addTransition(q1, 'q', None, None)  
+        q1.addTransition(q1, 't', None, None)  
+        q1.addTransition(q1, '(', None, None)  
+        q1.addTransition(q1, 'a', None, None) 
+        q1.addTransition(q1, ')', None, None)  
+        q1.addTransition(q1, '{', None, None)  
+        q1.addTransition(q1, '}', '}', None)  
         q1.addTransition(q2, None, '$', None)  
 
+
         pda = PDA(q0)
-        b = pda.run(w)
+        b = pda.run(q0, w, 0, ['#'])  
         Util.checkout(b, w)

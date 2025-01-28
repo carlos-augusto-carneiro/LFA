@@ -8,58 +8,71 @@ class PDA: #PDA = (Q, Σ, δ, q0, F)
         self.log = False
         self._pilha.append('#')
     
-    def run(self, input_string):
-        stack = ['$']  # Inicializa a pilha com o símbolo de início
-        #for char in input_string:
-        #    if char in ['e', 'q', 't', '(', 'a', ')', '{', '}']:  # Verifica se o caractere é um dos desejados
-        #        stack.append(char)
+    def merge(self, transitions1, transitions2):
+        return transitions1.union(transitions2)
 
-        current_state = self.start_state
+    def run(self, q, w, k, pilha):
+        transitions = set()
 
-        for char in input_string:
-            print(f'Processando: {char}, Estado atual: {current_state.getName()}, Pilha: {stack}')
-            transition_found = False
-            top_symbol = stack[-1] if stack else None  # Verifica o topo da pilha
+        if k == len(w) and q.is_final():
+            if self.log:
+                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
 
-            # Procura por transições com o símbolo atual e o topo da pilha
-            for transition in current_state.transitions(char, top_symbol):
-                if transition.getEdge().getPop() is None or (top_symbol and top_symbol == transition.getEdge().getPop()):
-                    print(f'Transição encontrada: {transition}')
-                    if transition.getEdge().getPop():
-                        stack.pop()  # Desempilha o símbolo
-                    if transition.getEdge().getPush():
-                        stack.append(transition.getEdge().getPush())  # Empilha o novo símbolo
-                    current_state = transition.getState()  # Muda para o próximo estado
-                    transition_found = True
-                    break
+            self.draw(w, k, transitions)
+            return True
 
-            if not transition_found:
-                print(f'Transição não encontrada para {char}')
-                return False  # Retorna falso se não encontrar transição
+        if k < len(w):
+            transitions = self.merge(transitions, q.transitions(w[k], pilha[-1] if pilha else None))
+            transitions = self.merge(transitions, q.transitions(w[k], None))
+            transitions = self.merge(transitions, q.transitions(None, pilha[-1] if pilha else None))
+            transitions = self.merge(transitions, q.transitions(None, None))
 
-        # Processa transições epsilon após consumir toda a entrada
-        while True:
-            transition_found = False
-            top_symbol = stack[-1] if stack else None  # Verifica o topo da pilha
+            if self.log:
+                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
 
-            for transition in current_state.transitions(None, top_symbol):
-                if transition.getEdge().getC() is None and (not transition.getEdge().getPop() or (top_symbol and top_symbol == transition.getEdge().getPop())):
-                    print(f'Transição epsilon encontrada: {transition}')
-                    if transition.getEdge().getPop():
-                        stack.pop()  # Desempilha o símbolo
-                    if transition.getEdge().getPush():
-                        stack.append(transition.getEdge().getPush())  # Empilha o novo símbolo
-                    current_state = transition.getState()  # Muda para o próximo estado
-                    transition_found = True
-                    break
+            self.draw(w, k, transitions)
 
-            if not transition_found:
-                break  # Sai do loop se não houver mais transições
+        if k == len(w):
+            transitions = self.merge(transitions, q.transitions(None, None))
+            transitions = self.merge(transitions, q.transitions(None, pilha[-1] if pilha else None))
 
-        # Verifica se o estado final é aceito e se a pilha está vazia ou contém apenas o símbolo de início
-        result = current_state.isFinal() and (not stack or stack == ['$'])
-        if result:
-            print(f'Reconheceu: {input_string}')
-        else:
-            print(f'Rejeitou: {input_string}')
-        return result
+            if self.log:
+                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
+
+            self.draw(w, k, transitions)
+
+        if len(transitions) == 0:
+            if self.log:
+                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
+
+            return self.finish(w, k, transitions)
+
+        for transition in transitions:
+            edge = transition.getEdge()
+            stack = pilha.copy()
+
+            if edge.getPop() is not None and stack and edge.getPop() == stack[-1]:
+                stack.pop()
+
+            if edge.getPush() is not None:
+                stack.append(edge.getPush())
+
+            pos = k
+            if edge.getC() is not None:
+                pos = k + 1
+
+            result = self.run(transition.getState(), w, pos, stack.copy())
+            if result:
+                return True
+
+        return False
+
+    def draw(self, w, k, transitions):
+        if self.log:
+            print(f"Estado atual: {self._q.get_name()}, Posição: {k}, Transições: {transitions}")
+
+    def finish(self, w, k, transitions):
+        # Implementação do método finish
+        if self.log:
+            print(f"Finalizando: {w} na posição {k}")
+        return False  # ou True, dependendo da lógica que você deseja implementar
