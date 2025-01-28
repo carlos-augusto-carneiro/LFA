@@ -7,10 +7,8 @@ class Util: #PDA = (Q, Σ, δ, {qi}, F)
 
 	@staticmethod
 	def checkout(b: bool, w: str): 
-		if b: 
-			print(f'reconheceu: {w}')
-		else: 
-			print(f'Não reconheceu: {w}')
+		if b: print(f'\033[92mreconheceu: {w}\033[0m')  # Verde
+		else: print(f'\033[91mNão reconheceu: {w}\033[0m')  # Vermelho
 
 	@staticmethod
 	def readFile(fileName: str):

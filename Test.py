@@ -111,32 +111,33 @@ class Test:
         q0 = State('q0')  
         q1 = State('q1')  
         q2 = State('q2')  
-
         q2.setFinal()  
 
-        
-        # Transições para reconhecer "eqt"
-        q0.addTransition(q1, 'e', None, None) 
-        q1.addTransition(q1, 'q', None, None)  
-        q1.addTransition(q1, 't', None, None)  
+        # Transition from q0 to q1 on 'e' without any stack operations
+        q0.addTransition(q1, 'e', None, None)
 
-        q1.addTransition(q1, '(', None, '(')  
-        q1.addTransition(q1, 'a', None, None)  
-        q1.addTransition(q1, ')', '(', None) 
+        # Process 'q' and 't' in q1
+        q1.addTransition(q1, 'q', None, None)
+        q1.addTransition(q1, 't', None, None)
 
-        q1.addTransition(q1, '{', None, '{')  
-        q1.addTransition(q1, 'e', None, None) 
-        q1.addTransition(q1, 'q', None, None)  
-        q1.addTransition(q1, 't', None, None)  
-        q1.addTransition(q1, '(', None, '(')  
-        q1.addTransition(q1, 'a', None, None)  
-        q1.addTransition(q1, ')', '(', None)  
-        q1.addTransition(q1, '{', None, '{') 
-        q1.addTransition(q1, '}', '{', None)  
+        # Handle parentheses: push '(' on '(', pop on ')'
+        q1.addTransition(q1, '(', None, '(')
+        q1.addTransition(q1, ')', '(', None)
 
-        # Transição para aceitar a entrada ao final
-        q1.addTransition(q2, None, '$', None) 
+        # Allow 'a' without stack changes
+        q1.addTransition(q1, 'a', None, None)
 
+        # Handle curly braces: push '{' on '{', pop on '}'
+        q1.addTransition(q1, '{', None, '{')
+        q1.addTransition(q1, '}', '{', None)
+
+        # Allow nested 'eqt' by staying in q1
+        q1.addTransition(q1, 'e', None, None)
+        q1.addTransition(q1, 'q', None, None)
+        q1.addTransition(q1, 't', None, None)
+
+        # Transition to final state q2 when stack has '$' left
+        q1.addTransition(q2, None, '$', None)
 
         pda = PDA(q0)
         b = pda.run(q0, w, 0, ['$'])  
