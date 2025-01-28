@@ -26,7 +26,7 @@ class State:
         r = set()
         for t in self._transitions:
             e = t.getEdge()
-            if (e.getC()==ch and e.getPop()==pop):
+            if (e.getC() == ch and e.getPop() == pop):
                 r.add(t)
         return r
       

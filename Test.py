@@ -63,11 +63,13 @@ class Test:
 
         pda = PDA(q0)
         pda.makeLog()
-        Util.checkout(pda.run(w),w)
+        b = pda.run(q0, w, 0, ['$'])  
+
+        Util.checkout(b, w)
 
     @staticmethod
     def teste_y_x(w):
-        print("{ w in Σ^* | w é um número binario multiplo de 3}")
+        #print("{ w in Σ^* | w é um número binario multiplo de 3}")
         q0 = State('q0')
         q1 = State('q1')
         q2 = State('q2')
@@ -81,7 +83,7 @@ class Test:
         q2.addTransition(q1, '0', None, None)
 
         pda = PDA(q0)
-        b = pda.run(w)
+        b = pda.run(q0, w, 0, ['$'])  
         Util.checkout(b, w)
 
     @staticmethod
@@ -101,7 +103,7 @@ class Test:
         q3.addTransition(q4, None, '$', None)
 
         pda = PDA(q1)
-        b = pda.run(w)
+        b = pda.run(q1, w, 0, ['$'])  
         Util.checkout(b,w)
 
     @staticmethod
@@ -113,18 +115,29 @@ class Test:
         q2.setFinal()  
 
         
-        q0.addTransition(q0, None, None, '$') 
+        # Transições para reconhecer "eqt"
         q0.addTransition(q1, 'e', None, None) 
         q1.addTransition(q1, 'q', None, None)  
         q1.addTransition(q1, 't', None, None)  
-        q1.addTransition(q1, '(', None, None)  
-        q1.addTransition(q1, 'a', None, None) 
-        q1.addTransition(q1, ')', None, None)  
-        q1.addTransition(q1, '{', None, None)  
-        q1.addTransition(q1, '}', '}', None)  
-        q1.addTransition(q2, None, '$', None)  
+
+        q1.addTransition(q1, '(', None, '(')  
+        q1.addTransition(q1, 'a', None, None)  
+        q1.addTransition(q1, ')', '(', None) 
+
+        q1.addTransition(q1, '{', None, '{')  
+        q1.addTransition(q1, 'e', None, None) 
+        q1.addTransition(q1, 'q', None, None)  
+        q1.addTransition(q1, 't', None, None)  
+        q1.addTransition(q1, '(', None, '(')  
+        q1.addTransition(q1, 'a', None, None)  
+        q1.addTransition(q1, ')', '(', None)  
+        q1.addTransition(q1, '{', None, '{') 
+        q1.addTransition(q1, '}', '{', None)  
+
+        # Transição para aceitar a entrada ao final
+        q1.addTransition(q2, None, '$', None) 
 
 
         pda = PDA(q0)
-        b = pda.run(q0, w, 0, ['#'])  
+        b = pda.run(q0, w, 0, ['$'])  
         Util.checkout(b, w)

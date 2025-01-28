@@ -5,47 +5,51 @@ class PDA: #PDA = (Q, Σ, δ, q0, F)
         self.start_state = q
         self._q = q
         self._pilha = []
-        self.log = False
-        self._pilha.append('#')
+        self.log = True
+        self._pilha.append('$')
+
+    def makeLog(self):
+        self.log = True
     
     def merge(self, transitions1, transitions2):
         return transitions1.union(transitions2)
 
     def run(self, q, w, k, pilha):
         transitions = set()
+        if k == len(w) and q.is_final:
+            #if self.log:
+             #   print(f"{q.getName()}[{k}]: {self.getPilha(pilha)}")
 
-        if k == len(w) and q.is_final():
-            if self.log:
-                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
-
-            self.draw(w, k, transitions)
+            #self.draw(w, k, transitions)
             return True
 
         if k < len(w):
+            #print(f"Processando: w[{k}] = {w[k] if k < len(w) else 'N/A'}, pilha[-1] = {pilha[-1] if pilha else 'N/A'}")
             transitions = self.merge(transitions, q.transitions(w[k], pilha[-1] if pilha else None))
             transitions = self.merge(transitions, q.transitions(w[k], None))
             transitions = self.merge(transitions, q.transitions(None, pilha[-1] if pilha else None))
             transitions = self.merge(transitions, q.transitions(None, None))
-
-            if self.log:
-                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
+            #if self.log:
+             #   print(f"{q.getName()}[{k}]: {self.getPilha(pilha)}")
 
             self.draw(w, k, transitions)
 
         if k == len(w):
+            
             transitions = self.merge(transitions, q.transitions(None, None))
             transitions = self.merge(transitions, q.transitions(None, pilha[-1] if pilha else None))
 
-            if self.log:
-                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
+            #if self.log:
+                #print(f"{q.getName()}[{k}]: {self.getPilha(pilha)}")
 
             self.draw(w, k, transitions)
-
+        
         if len(transitions) == 0:
-            if self.log:
-                print(f"{q.get_name()}[{k}]: {self.get_pilha(pilha)}")
+            #if self.log:
+            #    print(f"{q.getName()}[{k}]: {self.getPilha(pilha)}")
 
             return self.finish(w, k, transitions)
+
 
         for transition in transitions:
             edge = transition.getEdge()
@@ -68,11 +72,15 @@ class PDA: #PDA = (Q, Σ, δ, q0, F)
         return False
 
     def draw(self, w, k, transitions):
-        if self.log:
-            print(f"Estado atual: {self._q.get_name()}, Posição: {k}, Transições: {transitions}")
+        pass  # ou remova os comentários e indente corretamente
+        #if self.log:
+        #    print(f"Estado atual: {self._q.getName()}, Posição: {k}, Transições: {transitions}")
 
     def finish(self, w, k, transitions):
         # Implementação do método finish
-        if self.log:
-            print(f"Finalizando: {w} na posição {k}")
+        #if self.log:
+         #   print(f"Finalizando: {w} na posição {k}")
         return False  # ou True, dependendo da lógica que você deseja implementar
+
+    def getPilha(self, pilha):
+        return ''.join(pilha)  # Retorna a pilha como uma string
