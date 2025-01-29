@@ -1,5 +1,6 @@
 import itertools
 from State import State
+
 class PDA: #PDA = (Q, Σ, δ, q0, F)
     def __init__(self, q: State):
         self.start_state = q
