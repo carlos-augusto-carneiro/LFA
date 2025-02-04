@@ -28,7 +28,7 @@ if __name__ == "__main__":
     print("\033[43m" + "=" * 40 + "\033[0m"+"\n")  
     Test.while_grammar('eqt(a){eqt(a){}}')
     Test.while_grammar('eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){eqt(a){}}}}}}}}}}}}}}}}')
-    Test.while_grammar('eqt(a){eqt(a){}')
+    Test.while_grammar('eqt(a){eqt(a){}}')
     print("\n")
 
 
